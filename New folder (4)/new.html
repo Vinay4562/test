@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Website</title>
+  <!-- Include Font Awesome CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* CSS for styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f3f3f3;
+    }
+
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav {
+      text-align: right;
+    }
+
+    nav ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    nav ul li {
+      display: inline;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      padding: 10px 20px;
+      transition: background-color 0.3s;
+    }
+
+    nav ul li a:hover {
+      background-color: #555;
+    }
+
+    .logo {
+      width: 150px;
+      height: auto;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .scroll-container {
+      width: 80%;
+      overflow: hidden;
+      position: relative;
+      height: 400px; /* Adjust the height as needed */
+      margin: 5px auto;
+    }
+
+    .image-container {
+      display: flex;
+      height: 100%; /* Adjusted height to ensure images fit properly */
+      transition: transform 1s ease-in-out; /* Adjust the duration as needed */
+    }
+
+    .image-container img {
+      flex: 0 0 auto;
+      height: 100%; /* Ensure images fill the entire height of the container */
+      object-fit: cover; /* Ensures images maintain aspect ratio while filling the container */
+      transition: transform 0.3s; /* Smooth transition for zoom effect */
+      cursor: pointer; /* Change cursor to pointer on hover */
+    }
+
+    .image-container img:hover {
+      transform: scale(1.1); /* Zoom in effect on hover */
+    }
+
+    .nav-buttons {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .nav-buttons button {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .nav-buttons button:hover {
+      background-color: #555;
+    }
+
+    /* Modal */
+    .modal {
+      display: none; /* Hide modal by default */
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+      margin: auto;
+      display: block;
+      max-width: 80%;
+      max-height: 80%;
+    }
+
+    .modal-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Close button */
+    .close {
+      color: #fff;
+      font-size: 3em;
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
+    }
+
+    /* Add more styles as needed */
+
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <img class="logo" src="your-logo.png" alt="Logo">
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="container">
+    <h2>Main Content Area</h2>
+    <p>This is where your main content will go.</p>
+  </div>
+  <!-- Scrolling Images Section -->
+  <div class="scroll-container">
+    <div class="image-container" id="imageContainer">
+      <img src="class1.JPG" alt="Image 1" onclick="openModal('class1.JPG')">
+      <img src="class2.jpg" alt="Image 2" onclick="openModal('class2.jpg')">
+      <img src="class5.jpeg" alt="Image 3" onclick="openModal('class5.jpeg')">
+      <img src="class6.jpeg" alt="Image 4" onclick="openModal('class6.jpeg')">
+      <img src="class7.jpeg" alt="Image 5" onclick="openModal('class7.jpeg')">
+      <img src="class8.jpeg" alt="Image 6" onclick="openModal('class8.jpeg')">
+      <!-- Add more images as needed -->
+    </div>
+    <div class="nav-buttons">
+      <button id="prevBtn" onclick="scrollPrevious()"><i class="fas fa-chevron-left"></i></button>
+      <button id="nextBtn" onclick="scrollNext()"><i class="fas fa-chevron-right"></i></button>
+    </div>    
+  </div>
+  <!-- Content below the image container -->
+  <div class="container">
+    <h2>Additional Content</h2>
+    <p>This is additional content placed below the image container.</p>
+  </div>
+
+  <!-- Modal -->
+  <div id="myModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+  </div>
+
+  <script>
+    const imageContainer = document.getElementById("imageContainer");
+    let currentIndex = 0;
+    let autoScrollInterval;
+
+    function startAutoScroll() {
+      autoScrollInterval = setInterval(scrollNext, 5000); // Auto-scroll every 5 seconds
+    }
+
+    function stopAutoScroll() {
+      clearInterval(autoScrollInterval);
+    }
+
+    function scrollPrevious() {
+      if (currentIndex === 0) {
+        currentIndex = imageContainer.children.length - 1; // Set index to last image when at the first image
+      } else {
+        currentIndex--;
+      }
+      updateScroll();
+    }
+
+    function scrollNext() {
+      const numImages = imageContainer.children.length;
+      if (currentIndex === numImages - 1) {
+        currentIndex = 0; // Reset index to start from the first image when at the last image
+      } else {
+        currentIndex++;
+      }
+      updateScroll();
+    }
+
+    function updateScroll() {
+      const imageWidth = imageContainer.children[currentIndex].offsetWidth;
+      const newPosition = -currentIndex * imageWidth;
+      imageContainer.style.transform = `translateX(${newPosition}px)`;
+
+      // Disable next button when at the last image, enable otherwise
+      document.getElementById("nextBtn").disabled = currentIndex === imageContainer.children.length - 1;
+    }
+
+    // Start auto-scroll when the page loads
+    startAutoScroll();
+
+    // Stop auto-scroll when the user hovers over the scroll container
+    imageContainer.addEventListener("mouseover", stopAutoScroll);
+
+    // Resume auto-scroll when the user moves the mouse out of the scroll container
+    imageContainer.addEventListener("mouseout", startAutoScroll);
+
+    // Open modal with selected image
+    function openModal(imageUrl) {
+      document.getElementById("modalImage").src = imageUrl;
+      document.getElementById("myModal").style.display = "block";
+      stopAutoScroll(); // Stop auto-scroll when modal is open
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+      startAutoScroll(); // Resume auto-scroll when modal is closed
+    }
+
+    // Close modal when clicking outside of the modal content
+    window.onclick = function(event) {
+      const modal = document.getElementById("myModal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    };
+  </script>
+</body>
+</html>
